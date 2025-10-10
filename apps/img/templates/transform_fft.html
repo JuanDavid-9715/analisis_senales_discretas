@@ -1,0 +1,90 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Procesamiento de Imágenes</title>
+
+    <link rel="stylesheet" href="{% static 'css/transform_fft.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">ImageProcessor</a>
+            <ul class="nav-menu">
+                
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <main class="main-container">
+        <div class="hero-section">
+            <h1 class="hero-title">Conversión a Escala de Grises</h1>
+            <p class="hero-subtitle">Transforme imágenes a color a escala de grises y analice su representación en el dominio de la frecuencia mediante la Transformada de Fourier</p>
+        </div>
+        
+        <div class="image-grid">
+            <!-- Card 1: Formulario + Imagen Original -->
+            <div class="image-card" id="uploadCard">
+                <h3>Imagen Original</h3>
+
+                <!-- Previsualización antes de procesar -->
+                <div class="preview-container" id="previewContainer">
+                    <img id="imagePreview" src="" alt="Vista previa">
+                    <a class="change-image" onclick="changeImage()">Cambiar imagen</a>
+                </div>
+                
+                <!-- Imagen procesada después del envío -->
+                <div class="processed-image {% if image_uploaded %}show{% endif %}" id="processedImage">
+                    {% if image_uploaded %}
+                        <img src="{{ MEDIA_URL }}original_image.jpg" alt="Imagen Original Procesada">
+                    {% endif %}
+                </div>
+                
+                {% if not image_uploaded %}
+                    <p class="placeholder" id="placeholderText">Seleccione una imagen para iniciar el análisis</p>
+                {% endif %}
+                
+                <!-- Formulario -->
+                <form method="post" enctype="multipart/form-data" id="uploadForm">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_img">Seleccionar imagen:</label>
+                        <input type="file" name="img" accept="image/*" required id="id_img">
+                    </div>
+                    <button type="submit" class="btn" id="processBtn">
+                        Procesar Imagen
+                    </button>
+                    <div class="loading" id="loading">Procesando...</div>
+                </form>
+            </div>
+
+            <!-- Card 2: Transformada de Fourier -->
+            <div class="image-card">
+                <h3>Transformada de Fourier</h3>
+                {% if image_uploaded %}
+                    <img src="{{ MEDIA_URL }}fft_image.jpg" alt="Transformada de Fourier">
+                {% else %}
+                    <p class="placeholder">Análisis de frecuencia en dominio Fourier</p>
+                {% endif %}
+            </div>
+
+            <!-- Card 3: Imagen en escala de grises -->
+            <div class="image-card">
+                <h3>Escala de Grises</h3>
+                {% if image_uploaded %}
+                    <img src="{{ MEDIA_URL }}grayscale_image.jpg" alt="Imagen en Grises">
+                {% else %}
+                    <p class="placeholder">Conversión a escala de grises</p>
+                {% endif %}
+            </div>
+        </div>
+    </main>
+
+    <script src="{% static 'js/transform_fft.js' %}"></script>
+</body>
+</html>

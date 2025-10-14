@@ -1,92 +1,73 @@
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
+from ..forms import FilterForm
+from ..utils.filters import ImageFilterProcessor
 
-def low_pass_filter_view(request):
-    """
-    Vista para aplicar filtro pasa bajos
-    """
-    if request.method == 'POST' and request.FILES.get('image'):
-        uploaded_image = request.FILES['image']
-        
-        fs = FileSystemStorage()
-        filename = fs.save(uploaded_image.name, uploaded_image)
-        
-        # Llamar a la función de filtro pasa bajos
-        # filtered_image, fft_filtered = apply_low_pass_filter(filename)
-        
-        context = {
-            'title': 'Filtro Pasa Bajos',
-            'filter_type': 'low_pass',
-            'image_uploaded': True,
-            'original_image': filename,
-            # 'filtered_image': filtered_image,
-            # 'fft_image': fft_filtered
-        }
-        return render(request, 'img/filters.html', context)
-    
-    context = {
-        'title': 'Filtro Pasa Bajos',
-        'filter_type': 'low_pass',
-        'image_uploaded': False
-    }
-    return render(request, 'img/filters.html', context)
 
-def high_pass_filter_view(request):
+def filter_view(request):
     """
-    Vista para aplicar filtro pasa altos
+    Vista para aplicar filtros de frecuencia
     """
-    if request.method == 'POST' and request.FILES.get('image'):
-        uploaded_image = request.FILES['image']
-        
-        fs = FileSystemStorage()
-        filename = fs.save(uploaded_image.name, uploaded_image)
-        
-        # Llamar a la función de filtro pasa altos
-        # filtered_image, fft_filtered = apply_high_pass_filter(filename)
-        
-        context = {
-            'title': 'Filtro Pasa Altos',
-            'filter_type': 'high_pass',
-            'image_uploaded': True,
-            'original_image': filename,
-            # 'filtered_image': filtered_image,
-            # 'fft_image': fft_filtered
-        }
-        return render(request, 'img/filters.html', context)
-    
-    context = {
-        'title': 'Filtro Pasa Altos',
-        'filter_type': 'high_pass',
-        'image_uploaded': False
-    }
-    return render(request, 'img/filters.html', context)
 
-def band_pass_filter_view(request):
-    """
-    Vista para aplicar filtro pasa bandas
-    """
-    if request.method == 'POST' and request.FILES.get('image'):
-        uploaded_image = request.FILES['image']
+    if request.method == 'GET':
+        return render(request, 'filters.html', {
+            'image_uploaded': False,
+            'filter_form': FilterForm()
+        })
+
+    if request.method == 'POST':
+        print("se envio un POST")
+        form = FilterForm(request.POST, request.FILES)
         
-        fs = FileSystemStorage()
-        filename = fs.save(uploaded_image.name, uploaded_image)
+        if form.is_valid():
+            print("form es valido")
+            fs = FileSystemStorage()
+            
+            # Guardar nueva imagen SOLO si se envió una
+            if 'img' in request.FILES and request.FILES['img']:
+                print("se envio una imagen")
+                # Eliminar imágenes anteriores si existen
+                for filename in ["original_image.jpg", "filtered_image.jpg", "fft_image.jpg"]:
+                    if fs.exists(filename):
+                        fs.delete(filename)
+                
+                # Guardar nueva imagen
+                uploaded_file = form.cleaned_data['img']
+                fs.save("original_image.jpg", uploaded_file)
+            
+            # Obtener parámetros y procesar
+            filter_type = form.cleaned_data['filter_type']
+            cutoff = form.cleaned_data['cutoff']
+            cutoff2 = form.cleaned_data['cutoff2']
+            
+            print(filter_type)
+            print(cutoff)
+            print(cutoff2)
+            
+            try:
+                # Aplicar filtro
+                processor = ImageFilterProcessor()
+                filter_name = processor.apply_filter(filter_type, cutoff, cutoff2)
+                
+                return render(request, 'filters.html', {
+                    'image_uploaded': True,
+                    'filter_form': FilterForm(initial={
+                        'filter_type': filter_type,
+                        'cutoff': cutoff,
+                        'cutoff2': cutoff2
+                    }),
+                    'filter_name': filter_name
+                })
+                
+            except Exception as e:
+                return render(request, 'filters.html', {
+                    'image_uploaded': False,
+                    'filter_form': form,
+                    'error_message': f'Error al procesar la imagen: {str(e)}'
+                })
         
-        # Llamar a la función de filtro pasa bandas
-        # filtered_image, fft_filtered = apply_band_pass_filter(filename)
-        
-        context = {
-            'title': 'Filtro Pasa Bandas',
-            'filter_type': 'band_pass',
-            'image_uploaded': True,
-            'original_image': filename,
-            # 'filtered_image': filtered_image,
-            # 'fft_image': fft_filtered
-        }
-        return render(request, 'img/filters.html', context)
-    
-    context = {
-        'title': 'Filtro Pasa Bandas',
-        'filter_type': 'band_pass',
-        'image_uploaded': False
-    }
-    return render(request, 'filters.html', context)
+        # Si el formulario no es válido
+        return render(request, 'filters.html', {
+            'image_uploaded': False,
+            'filter_form': form
+        })

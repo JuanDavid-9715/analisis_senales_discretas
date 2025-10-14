@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
 
-from ..forms.img import ImgForm
+from ..forms import GraysCaleForm
 
 
 def grayscale_view(request):
@@ -10,7 +10,7 @@ def grayscale_view(request):
     """
     
     if request.method == 'POST':
-        form = ImgForm(request.POST, request.FILES)
+        form = GraysCaleForm(request.POST, request.FILES)
         if form.is_valid():
             fs = FileSystemStorage()
             
@@ -19,17 +19,21 @@ def grayscale_view(request):
                 
             fs.save("original_image.jpg", form.cleaned_data['img'])
             
-            # process_grayscale()
+            process_grayscale()
             
             context = {
                 'image_uploaded': True,
-                'img_form': ImgForm(),
+                'img_form': GraysCaleForm(),
             }
             
             return render(request, 'transform_fft.html', context)
     
     context = {
         'image_uploaded': False,
-        'img_form': ImgForm(),
+        'img_form': GraysCaleForm(),
     }
+    
     return render(request, 'transform_fft.html', context)
+
+def process_grayscale():
+    pass

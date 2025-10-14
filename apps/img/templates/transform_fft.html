@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Procesamiento de Imágenes</title>
 
-    <link rel="stylesheet" href="{% static 'css/transform_fft.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -15,7 +15,9 @@
         <div class="nav-container">
             <a href="#" class="nav-logo">ImageProcessor</a>
             <ul class="nav-menu">
-                
+                <li><a href="{% url 'grayscale' %}" class="nav-link active">Color a Grises</a></li>
+                <li><a href="{% url 'filter' %}" class="nav-link">Filtros</a></li>
+                <li><a href="{% url 'compression' %}" class="nav-link">Compresión</a></li>
             </ul>
         </div>
     </nav>
@@ -52,10 +54,10 @@
                 <!-- Formulario -->
                 <form method="post" enctype="multipart/form-data" id="uploadForm">
                     {% csrf_token %}
-                    <div class="form-group">
-                        <label for="id_img">Seleccionar imagen:</label>
-                        <input type="file" name="img" accept="image/*" required id="id_img">
-                    </div>
+                    
+                    <!-- Renderizar formulario Django -->
+                    {{ img_form.as_p }}
+                    
                     <button type="submit" class="btn" id="processBtn">
                         Procesar Imagen
                     </button>
@@ -85,6 +87,6 @@
         </div>
     </main>
 
-    <script src="{% static 'js/transform_fft.js' %}"></script>
+    <script src="{% static 'js/index.js' %}"></script>
 </body>
 </html>

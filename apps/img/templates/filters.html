@@ -1,82 +1,99 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }}</title>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        .nav { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #ddd; }
-        .nav a { margin-right: 20px; text-decoration: none; color: #007bff; font-weight: bold; }
-        .upload-form { background: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 30px; }
-        .results { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 30px; }
-        .image-card { border: 1px solid #ddd; padding: 15px; border-radius: 5px; text-align: center; }
-        .image-card img { max-width: 100%; height: auto; border: 1px solid #ccc; }
-        .btn { background: #007bff; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
-        .btn:hover { background: #0056b3; }
-        .filter-info { background: #e7f3ff; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
-    </style>
+    <title>Filtros de Frecuencia</title>
+
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/sliders.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <div class="nav">
-            <a href="{% url 'color_to_grayscale' %}">Color a Grises</a>
-            <a href="{% url 'low_pass_filter' %}">Filtro Pasa Bajos</a>
-            <a href="{% url 'high_pass_filter' %}">Filtro Pasa Altos</a>
-            <a href="{% url 'band_pass_filter' %}">Filtro Pasa Bandas</a>
-            <a href="{% url 'image_compression' %}">Compresión Básica</a>
-            <a href="{% url 'ibp_compression' %}">Compresión IBP</a>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">ImageProcessor</a>
+            <ul class="nav-menu">
+                <li><a href="{% url 'grayscale' %}" class="nav-link">Color a Grises</a></li>
+                <li><a href="{% url 'filter' %}" class="nav-link active">Filtros</a></li>
+                <li><a href="{% url 'compression' %}" class="nav-link">Compresión</a></li>
+            </ul>
         </div>
+    </nav>
 
-        <h1>{{ title }}</h1>
-        
-        <div class="filter-info">
-            {% if filter_type == 'low_pass' %}
-                <p><strong>Filtro Pasa Bajos:</strong> Suaviza la imagen eliminando componentes de alta frecuencia.</p>
-            {% elif filter_type == 'high_pass' %}
-                <p><strong>Filtro Pasa Altos:</strong> Realza bordes y detalles finos eliminando componentes de baja frecuencia.</p>
-            {% elif filter_type == 'band_pass' %}
-                <p><strong>Filtro Pasa Bandas:</strong> Permite el paso de un rango específico de frecuencias.</p>
-            {% endif %}
+    <!-- Contenido principal -->
+    <main class="main-container">
+        <div class="hero-section">
+            <h1 class="hero-title">Filtros de Frecuencia</h1>
+            <p class="hero-subtitle">Aplique filtros en el dominio de la frecuencia para realzar o suavizar características específicas de la imagen</p>
         </div>
         
-        <div class="upload-form">
-            <h3>Subir Imagen en Escala de Grises</h3>
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="file" name="image" accept="image/*" required>
-                <button type="submit" class="btn">Aplicar Filtro</button>
-            </form>
-        </div>
-
-        {% if image_uploaded %}
-        <div class="results">
-            <div class="image-card">
+        <div class="image-grid">
+            <!-- Card 1: Formulario + Imagen Original -->
+            <div class="image-card" id="uploadCard">
                 <h3>Imagen Original</h3>
-                <img src="{{ MEDIA_URL }}{{ original_image }}" alt="Imagen Original">
-                <p>Imagen en escala de grises de entrada</p>
+
+                <!-- Previsualización antes de procesar -->
+                <div class="preview-container" id="previewContainer">
+                    <img id="imagePreview" src="" alt="Vista previa">
+                    <a class="change-image" onclick="changeImage()">Cambiar imagen</a>
+                </div>
+                
+                <!-- Imagen procesada después del envío -->
+                <div class="processed-image {% if image_uploaded %}show{% endif %}" id="processedImage">
+                    {% if image_uploaded %}
+                        <img src="{{ MEDIA_URL }}original_image.jpg" alt="Imagen Original Procesada">
+                    {% endif %}
+                </div>
+                
+                {% if not image_uploaded %}
+                    <p class="placeholder" id="placeholderText">Seleccione una imagen y el tipo de filtro</p>
+                {% endif %}
+                
+                <!-- Formulario -->
+                <form method="post" enctype="multipart/form-data" id="uploadForm">
+                    {% csrf_token %}
+                    
+                    <!-- Renderizar TODO el formulario -->
+                    {{ filter_form.as_p }}
+                    
+                    <button type="submit" class="btn" id="processBtn">
+                        Procesar Imagen
+                    </button>
+                    <div class="loading" id="loading" style="display: none;">Aplicando filtro...</div>
+                </form>
             </div>
-            
+
+            <!-- Card 2: Imagen Filtrada -->
             <div class="image-card">
                 <h3>Imagen Filtrada</h3>
-                <!-- <img src="{{ MEDIA_URL }}{{ filtered_image }}" alt="Imagen Filtrada"> -->
-                <div style="background: #eee; height: 200px; display: flex; align-items: center; justify-content: center;">
-                    [Imagen con filtro aplicado]
-                </div>
-                <p>Resultado después del filtro</p>
+                {% if image_uploaded %}
+                    <img src="{{ MEDIA_URL }}filtered_image.jpg" alt="Imagen Filtrada">
+                    {% if filter_name %}
+                        <p style="text-align: center; color: var(--primary-navy); margin-top: 1rem; font-weight: 500;">
+                            {{ filter_name }}
+                        </p>
+                    {% endif %}
+                {% else %}
+                    <p class="placeholder">Resultado del filtro aplicado</p>
+                {% endif %}
             </div>
-            
+
+            <!-- Card 3: FFT con Filtro -->
             <div class="image-card">
                 <h3>FFT con Filtro</h3>
-                <!-- <img src="{{ MEDIA_URL }}{{ fft_image }}" alt="FFT Filtrada"> -->
-                <div style="background: #eee; height: 200px; display: flex; align-items: center; justify-content: center;">
-                    [FFT con filtro aplicado]
-                </div>
-                <p>Transformada de Fourier con el filtro</p>
+                {% if image_uploaded %}
+                    <img src="{{ MEDIA_URL }}fft_image.jpg" alt="FFT con Filtro">
+                {% else %}
+                    <p class="placeholder">Representación en frecuencia con filtro</p>
+                {% endif %}
             </div>
         </div>
-        {% endif %}
-    </div>
+    </main>
+
+    <script src="{% static 'js/index.js' %}"></script>
+    <script src="{% static 'js/filter.js' %}"></script>
 </body>
 </html>

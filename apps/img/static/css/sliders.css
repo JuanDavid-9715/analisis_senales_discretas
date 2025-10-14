@@ -1,0 +1,74 @@
+/* Sliders de cutoff */
+.cutoff-slider {
+    width: 100%;
+    margin: 0.5rem 0;
+}
+
+/* Valores de los sliders */
+.cutoff-value {
+    display: inline-block;
+    margin-left: 10px;
+    padding: 2px 8px;
+    background: var(--primary-navy);
+    color: white;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    min-width: 30px;
+    text-align: center;
+}
+
+/* Labels de formulario */
+.form-group label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Ocultar cutoff2 por defecto */
+#cutoff2-group {
+    display: none;
+}
+
+.form-group:has(label[for="id_cutoff2"]) {
+    display: none;
+}
+
+/* Mostrar cuando está activo el filtro pasa banda */
+.form-group:has(label[for="id_cutoff2"]).show {
+    display: block;
+}
+
+/* Estilos para opciones de filtro (radio buttons) */
+.filter-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border-medium);
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.filter-option:hover {
+    border-color: var(--primary-navy-light);
+    background: rgba(109, 40, 217, 0.02);
+}
+
+.filter-option input[type="radio"] {
+    margin: 0;
+}
+
+.filter-option label {
+    margin: 0;
+    cursor: pointer;
+    font-weight: 500;
+}

@@ -14,11 +14,19 @@
 <body>
     <nav class="navbar">
         <div class="nav-container">
-            <a href="#" class="nav-logo">ImageProcessor</a>
-            <ul class="nav-menu">
-                <li><a href="{% url 'grayscale' %}" class="nav-link active">Color a Grises</a></li>
-                <li><a href="{% url 'filter' %}" class="nav-link">Filtros</a></li>
-                <li><a href="{% url 'compression' %}" class="nav-link">Compresión</a></li>
+            <a href="#" class="nav-logo">FourierGray-lab</a>
+            
+            <!-- Menú hamburguesa -->
+            <div class="nav-toggle" id="navToggle">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </div>
+            
+            <ul class="nav-menu" id="navMenu">
+                <li><a href="{% url 'grayscale' %}" class="nav-link {% if request.resolver_match.url_name == 'grayscale' %}active{% endif %}">Escala de grises</a></li>
+                <li><a href="{% url 'filter' %}" class="nav-link {% if request.resolver_match.url_name == 'filter' %}active{% endif %}">Filtros</a></li>
+                <li><a href="{% url 'compression' %}" class="nav-link {% if request.resolver_match.url_name == 'compression' %}active{% endif %}">Compresión</a></li>
             </ul>
         </div>
     </nav>

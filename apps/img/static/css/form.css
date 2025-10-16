@@ -1,0 +1,310 @@
+/* ===== ESTILOS MEJORADOS PARA FORMULARIOS ===== */
+
+/* Contenedor del formulario */
+#uploadForm {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Grupos de formulario mejorados */
+.form-group {
+    margin-bottom: 0;
+}
+
+.form-group label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    padding: 0.5rem 0;
+}
+
+/* Campo de subida de archivo mejorado */
+.file-input-container {
+    position: relative;
+    margin-bottom: 0.5rem;
+}
+
+#id_img {
+    width: 100%;
+    padding: 1rem;
+    border: 2px dashed var(--border-medium);
+    border-radius: 12px;
+    background: var(--background-light);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    font-size: 0.95rem;
+    color: var(--text-medium);
+}
+
+#id_img::file-selector-button {
+    background: var(--primary-navy);
+    color: white;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-right: 1rem;
+}
+
+#id_img::file-selector-button:hover {
+    background: var(--primary-navy-dark);
+}
+
+#id_img:hover {
+    border-color: var(--primary-navy-light);
+    background: rgba(109, 40, 217, 0.02);
+}
+
+#id_img:focus {
+    outline: none;
+    border-color: var(--primary-navy);
+    box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1);
+}
+
+/* Contenedor de opciones de radio mejorado */
+.filter-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+
+.filter-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    border: 2px solid var(--border-light);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    background: var(--card-white);
+}
+
+.filter-option:hover {
+    border-color: var(--primary-navy-light);
+    background: rgba(109, 40, 217, 0.03);
+    transform: translateY(-1px);
+}
+
+.filter-option:has(input[type="radio"]:checked) {
+    border-color: var(--primary-navy);
+    background: rgba(109, 40, 217, 0.08);
+    box-shadow: 0 2px 8px rgba(109, 40, 217, 0.1);
+}
+
+.filter-option input[type="radio"] {
+    margin: 0;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--primary-navy);
+    cursor: pointer;
+}
+
+.filter-option label {
+    margin: 0;
+    cursor: pointer;
+    font-weight: 500;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    flex: 1;
+}
+
+/* Sliders mejorados */
+.slider-container {
+    margin: 0.5rem 0 1rem 0;
+}
+
+.cutoff-slider, .compression-slider {
+    width: 100%;
+    height: 6px;
+    border-radius: 10px;
+    background: var(--border-light);
+    outline: none;
+    -webkit-appearance: none;
+    margin: 0.75rem 0;
+}
+
+.cutoff-slider::-webkit-slider-thumb, 
+.compression-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary-navy);
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    transition: all 0.2s ease;
+}
+
+.cutoff-slider::-webkit-slider-thumb:hover,
+.compression-slider::-webkit-slider-thumb:hover {
+    background: var(--primary-navy-dark);
+    transform: scale(1.1);
+}
+
+.cutoff-slider::-moz-range-thumb,
+.compression-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--primary-navy);
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Valores de sliders mejorados */
+.cutoff-value, .compression-value {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+    padding: 4px 12px;
+    background: var(--primary-navy);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    min-width: 40px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(109, 40, 217, 0.2);
+}
+
+/* Botón mejorado */
+.btn {
+    background: linear-gradient(135deg, var(--primary-navy), var(--primary-navy-dark));
+    color: white;
+    padding: 1rem 2rem;
+    border: none;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 0.5rem;
+    box-shadow: 0 4px 12px rgba(109, 40, 217, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(109, 40, 217, 0.4);
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn:active {
+    transform: translateY(0);
+}
+
+.btn:disabled {
+    background: var(--text-light);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn:disabled:hover::before {
+    left: -100%;
+}
+
+/* Estados de carga mejorados */
+.loading {
+    display: none;
+    text-align: center;
+    color: var(--primary-navy);
+    font-weight: 500;
+    font-size: 0.95rem;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: rgba(109, 40, 217, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(109, 40, 217, 0.1);
+}
+
+.loading::before {
+    content: '⏳ ';
+    margin-right: 0.5rem;
+}
+
+/* Texto de ayuda */
+.form-help {
+    color: var(--text-light);
+    font-size: 0.85rem;
+    margin-top: 0.5rem;
+    line-height: 1.4;
+}
+
+/* Animaciones para transiciones suaves */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.form-group {
+    animation: slideDown 0.3s ease-out;
+}
+
+/* Responsive para formularios */
+@media (max-width: 768px) {
+    .filter-option {
+        padding: 0.875rem;
+    }
+    
+    .filter-option label {
+        font-size: 0.9rem;
+    }
+    
+    .btn {
+        padding: 0.875rem 1.5rem;
+        font-size: 0.95rem;
+    }
+    
+    #id_img {
+        padding: 0.875rem;
+    }
+}
+
+/* Efecto de focus mejorado */
+.filter-option:focus-within {
+    border-color: var(--primary-navy);
+    box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1);
+}
+
+.cutoff-slider:focus,
+.compression-slider:focus {
+    box-shadow: 0 0 0 3px rgba(109, 40, 217, 0.1);
+}

@@ -9,6 +9,7 @@
 
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="{% static 'css/sliders.css' %}">
+    <link rel="stylesheet" href="{% static 'css/form.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -45,6 +46,14 @@
                 <div class="processed-image {% if image_uploaded %}show{% endif %}" id="processedImage">
                     {% if image_uploaded %}
                         <img src="{{ MEDIA_URL }}original_image.jpg" alt="Imagen Original">
+                        <!-- MOSTRAR TAMAÑO ORIGINAL -->
+                        {% if original_size %}
+                        <div class="size-info">
+                            <p style="text-align: center; color: var(--primary-navy); margin-top: 1rem; font-weight: 500;">
+                                Tamaño original: {{ original_size }}
+                            </p>
+                        </div>
+                        {% endif %}
                     {% endif %}
                 </div>
                 

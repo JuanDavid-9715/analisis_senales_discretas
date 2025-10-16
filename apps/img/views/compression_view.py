@@ -1,5 +1,7 @@
+import os
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
+
 from ..forms import CompressionForm
 from ..utils.compression import ImageCompressionProcessor
 
@@ -45,12 +47,20 @@ def compression_view(request):
                 processor = ImageCompressionProcessor()
                 compression_info = processor.apply_compression(compression_percentage)
                 
+                # Obtener tamaño de la imagen original
+                original_size = "0 B"
+                if fs.exists("original_image.jpg"):
+                    original_path = fs.path("original_image.jpg")
+                    original_size_bytes = os.path.getsize(original_path)
+                    original_size = processor._format_size(original_size_bytes)
+                
                 return render(request, 'compression.html', {
                     'image_uploaded': True,
                     'compression_form': CompressionForm(initial={
                         'compression_percentage': compression_percentage
                     }),
-                    'compression_info': compression_info
+                    'compression_info': compression_info,
+                    'original_size': original_size
                 })
                 
             except Exception as e:

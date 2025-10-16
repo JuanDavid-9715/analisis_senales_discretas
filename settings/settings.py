@@ -26,13 +26,12 @@ SECRET_KEY = 'django-insecure-o5&(8t6zc)gg4een3g5^+9!+_nm_$jwq_2f5*m(9a1rs@&_8f7
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-APP_NAME = os.environ.get("FLY_APP_NAME")
-if APP_NAME:
-    # Estamos en Fly.io
-    ALLOWED_HOSTS = [f"{APP_NAME}.fly.dev", "localhost", "127.0.0.1"]
-else:
-    # Estamos en desarrollo local
-    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "0.0.0.0"]
+ALLOWED_HOSTS = [
+    "localhost", 
+    "127.0.0.1", 
+    "0.0.0.0",
+    "fouriergraylab.pythonanywhere.com",
+]
 
 
 # Application definition

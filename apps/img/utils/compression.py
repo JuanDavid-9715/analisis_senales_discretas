@@ -83,15 +83,20 @@ def compress_image_by_percentage(pil_img, percentage, out_format="JPEG"):
     buf.seek(0)
     return compressed, size
 
+import numpy as np
+from PIL import Image, ImageDraw, ImageFont
+import io
+
 def compress_ibp(gray_pil_img, scale_factor=0.5, iterations=10):
     """
     Aplica compresión y reconstrucción usando Iterative Back Projection (IBP).
+    Incluye histograma LBP en la imagen resultante.
     Entrada:
       - gray_pil_img: imagen en escala de grises (PIL)
       - scale_factor: factor de reducción (0 < scale_factor <= 1)
       - iterations: número de iteraciones del algoritmo IBP
     Salida:
-      (imagen_reconstruida, tamaño_representación_comprimida_en_bytes)
+      (imagen_reconstruida_con_histograma, tamaño_representación_comprimida_en_bytes)
     """
     if scale_factor <= 0 or scale_factor > 1:
         raise ValueError("scale_factor debe estar en (0,1].")
@@ -141,4 +146,88 @@ def compress_ibp(gray_pil_img, scale_factor=0.5, iterations=10):
         est_arr = np.clip(est_arr + error_up, 0, 255)
 
     reconstructed = Image.fromarray(est_arr.astype(np.uint8))
-    return reconstructed, compressed_size
+    
+    # Aplicar LBP a la imagen reconstruida y generar histograma
+    reconstructed_with_histogram = add_lbp_histogram(reconstructed)
+    
+    return reconstructed_with_histogram, compressed_size
+
+def compute_lbp(image_array):
+    """
+    Calcula el LBP (Local Binary Pattern) para una imagen en escala de grises.
+    """
+    height, width = image_array.shape
+    lbp = np.zeros_like(image_array)
+    
+    for i in range(1, height-1):
+        for j in range(1, width-1):
+            center = image_array[i, j]
+            code = 0
+            code |= (image_array[i-1, j-1] >= center) << 7
+            code |= (image_array[i-1, j] >= center) << 6
+            code |= (image_array[i-1, j+1] >= center) << 5
+            code |= (image_array[i, j+1] >= center) << 4
+            code |= (image_array[i+1, j+1] >= center) << 3
+            code |= (image_array[i+1, j] >= center) << 2
+            code |= (image_array[i+1, j-1] >= center) << 1
+            code |= (image_array[i, j-1] >= center) << 0
+            lbp[i, j] = code
+    
+    return lbp
+
+def add_lbp_histogram(image):
+    """
+    Añade el histograma LBP a la imagen comprimida.
+    """
+    # Convertir a array numpy
+    img_array = np.array(image)
+    
+    # Calcular LBP
+    lbp_array = compute_lbp(img_array)
+    
+    # Calcular histograma LBP
+    hist, bins = np.histogram(lbp_array.ravel(), bins=256, range=[0, 256])
+    
+    # Crear una nueva imagen más grande para incluir el histograma
+    original_width, original_height = image.size
+    new_height = original_height + 150  # Espacio adicional para el histograma
+    
+    # Crear imagen combinada
+    combined_image = Image.new('L', (original_width, new_height), 255)
+    combined_image.paste(image, (0, 0))
+    
+    # Dibujar el histograma
+    draw = ImageDraw.Draw(combined_image)
+    
+    # Normalizar histograma para que quepa en el espacio disponible
+    max_hist = max(hist) if max(hist) > 0 else 1
+    hist_height = 100
+    scale_factor = hist_height / max_hist
+    
+    # Dibujar ejes
+    y_base = original_height + 20
+    draw.line([(50, y_base), (50, y_base + hist_height)], fill=0, width=2)  # Eje Y
+    draw.line([(50, y_base + hist_height), (original_width - 50, y_base + hist_height)], fill=0, width=2)  # Eje X
+    
+    # Dibujar barras del histograma (solo los primeros 256 bins)
+    bar_width = max(1, (original_width - 100) // 256)
+    for i in range(min(256, len(hist))):
+        x = 50 + i * bar_width
+        bar_height = int(hist[i] * scale_factor)
+        if bar_height > 0:
+            draw.rectangle([x, y_base + hist_height - bar_height, 
+                          x + bar_width - 1, y_base + hist_height], 
+                         fill=100)  # Gris medio para las barras
+    
+    # Añadir título
+    try:
+        # Intentar usar una fuente por defecto
+        font = ImageFont.load_default()
+        draw.text((original_width // 2 - 60, original_height + hist_height + 40), 
+                 "Histograma LBP", fill=0, font=font)
+    except:
+        # Si falla la fuente, dibujar sin fuente específica
+        draw.text((original_width // 2 - 60, original_height + hist_height + 40), 
+                 "Histograma LBP", fill=0)
+    
+    return combined_image

@@ -86,3 +86,13 @@ class CompressionForm(forms.Form):
         self.fields['compression_percentage'].label = mark_safe(
             "Porcentaje de compresión: <span id='compressionValue' class='compression-value'>50</span>%"
         )
+        
+class IAForm(forms.Form):
+    img = forms.ImageField(
+        required=False,
+        label="Subir imagen o tomar foto",
+        widget=forms.FileInput(attrs={
+            'accept': 'image/*', 
+            'capture': 'camera'
+        })
+    )

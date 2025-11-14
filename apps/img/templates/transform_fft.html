@@ -27,6 +27,7 @@
                 <li><a href="{% url 'grayscale' %}" class="nav-link {% if request.resolver_match.url_name == 'grayscale' %}active{% endif %}">Escala de grises</a></li>
                 <li><a href="{% url 'filter' %}" class="nav-link {% if request.resolver_match.url_name == 'filter' %}active{% endif %}">Filtros</a></li>
                 <li><a href="{% url 'compression' %}" class="nav-link {% if request.resolver_match.url_name == 'compression' %}active{% endif %}">Compresión</a></li>
+                <li><a href="{% url 'ia' %}" class="nav-link {% if request.resolver_match.url_name == 'ia' %}active{% endif %}">Reconocimiento IA</a></li>
             </ul>
         </div>
     </nav>

@@ -31,6 +31,7 @@ ALLOWED_HOSTS = [
     "127.0.0.1", 
     "0.0.0.0",
     "juandavidmc.pythonanywhere.com",
+    "analisissenalesdiscretas-production.up.railway.app",
 ]
 
 
@@ -62,6 +63,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware'
 ]
 
 ROOT_URLCONF = 'settings.urls'

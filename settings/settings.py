@@ -32,8 +32,15 @@ ALLOWED_HOSTS = [
     "0.0.0.0",
     "juandavidmc.pythonanywhere.com",
     "analisissenalesdiscretas-production.up.railway.app",
+    "*.railway.app",
 ]
 
+# Configuración para CSRF
+CSRF_TRUSTED_ORIGINS = [
+    'https://analisissenalesdiscretas-production.up.railway.app',
+    'https://*.railway.app',
+    'https://*.up.railway.app',
+]
 
 # Application definition
 BASE_APPS = [

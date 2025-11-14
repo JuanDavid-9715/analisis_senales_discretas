@@ -8,10 +8,12 @@ import os
 from django.conf import settings
 
 # Cargar el modelo
+model_path = os.path.join(settings.BASE_DIR, 'apps', 'img', 'model', 'modelo_predecirDigito.h5')
 try:
-    modelo = tf.keras.models.load_model('apps\img\model\modelo_predecirDigito.h5')
+    modelo = tf.keras.models.load_model(model_path)
     MODELO_CARGADO = True
-except:
+except Exception as e:
+    print(f"Error cargando modelo: {e}")
     MODELO_CARGADO = False
 
 def predecir_digito():
@@ -68,9 +70,17 @@ def ia_view(request):
                 fs.save("original_image.jpg", request.FILES['img'])
             
             # Predecir con IA
-            prediccion_ia = predecir_digito() if MODELO_CARGADO else None
+            prediccion_ia = predecir_digito() if MODELO_CARGADO else {
+                'numero': None,
+                'confianza': 0.0,
+                'exito': False,
+                'error': 'Modelo no disponible'
+            }
             
-            print(f"Número: {prediccion_ia['numero']}, Confianza: {prediccion_ia['confianza']}, Éxito: {prediccion_ia['exito']}")
+            if prediccion_ia and prediccion_ia['exito']:
+                print(f"Número: {prediccion_ia['numero']}, Confianza: {prediccion_ia['confianza']}, Éxito: {prediccion_ia['exito']}")
+            elif prediccion_ia:
+                print(f"Error en predicción: {prediccion_ia.get('error', 'Error desconocido')}")
             
             return render(request, 'ia.html', {
                 'image_uploaded': True,
